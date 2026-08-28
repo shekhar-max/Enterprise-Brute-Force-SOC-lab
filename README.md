@@ -52,6 +52,7 @@ The infrastructure is orchestrated using a virtualized firewall router segmentin
 | **APPLICATION_NET** | `vtnet3` / Internal | `192.168.30.0/24` | **Linux Node:** Microservices stack (Docker, Kubernetes, Nginx Web Gateway) |
 | **ATTACKER_NET** | `vtnet4` / Internal | `192.168.40.0/24` | **Kali Linux:** Pentesting Suite (Nmap, Metasploit, Hydra) |
 
+<img width="1856" height="137" alt="image" src="https://github.com/user-attachments/assets/04da095a-c04c-47ac-9d39-596c0933d41e" />
 ---
 
 ## 🔧 Technical Implementations & Steps
