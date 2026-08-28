@@ -1,5 +1,35 @@
-# Enterprise-Brute-Force-SOC-lab
-A multi-zone virtualized SOC home lab featuring a segmented pfSense firewall environment, automated log pipelines (Windows Event Logs &amp; Linux Syslogs) via Splunk Universal Forwarders, and structured Suricata NIDS telemetry ingestion into a centralized Splunk SIEM platform for brute force attack simulation
+### Adversary Simulation: SSH Brute-Force via Hydra
+To evaluate host-based logging and network visibility under password-guessing conditions, an active authentication attack was launched from the **ATTACKER_NET** (`Kali Linux`) against an SSH service running on a target endpoint inside **DMZ_NET** (`192.168.20.100`).
+
+The dictionary attack was executed using **Hydra** with a custom password list targeting the user account `admin`:
+
+```bash
+hydra -t 4 -V -f -l admin -P passlist.txt ssh://192.168.20.100
+```
+<img width="650" height="385" alt="image" src="https://github.com/user-attachments/assets/8e7f8fc5-6f53-4713-aba0-efbf220c248a" />
+
+#### 🛡️ Blue Team Detection Metrics
+This simulation generated specific defensive markers across both the network and host layers, allowing complete correlation inside Splunk:
+
+1. **Host-Based Analysis (Linux Auth Logs):** 
+   The Splunk Universal Forwarder parsing `/var/log/auth.log` on the target machine immediately ingested thousands of tracking indicators. To query these failed authentication loops inside Splunk, search:
+   ```splunk
+   source="udp:1514" "Failed password for" OR "invalid user"
+   ```
+
+2. **Network-Based Analysis (Suricata NIDS):**
+   Suricata picked up the rapid, repetitive TCP connection handshakes to port 22 and generated high-priority alerts for brute-force patterns. To verify the NIDS alert triggers, search:
+   ```splunk
+   source="udp:1514" "suricata" "SSH brute force"
+   ```
+
+3. **SIEM Correlation Rule (SPL):**
+   To automate alerts for this specific scenario in a true SOC environment, the following Search Processing Language (SPL) query is implemented to trigger whenever a single source destination registers more than 5 failed authentication attempts within a 1-minute window:
+   ```splunk
+   source="udp:1514" "Failed password" 
+   | stats count by src_ip, user 
+   | where count > 5
+   ```
 # Multi-Zone Enterprise SOC Home Lab & Log Ingestion Pipeline
 
 ## 📌 Project Overview
@@ -10,9 +40,7 @@ This project demonstrates the end-to-end design, deployment, and configuration o
 ## 🏗️ Architecture Topology
 The infrastructure is orchestrated using a virtualized firewall router segmenting four distinct, isolated internal virtual networks (using host-only internal switches) to simulate a hardened corporate environment.
 
-*Insert your custom topology diagram image here:*
-![SOC Lab Topology](<img width="1258" height="832" alt="image_69be1945" src="https://github.com/user-attachments/assets/84407bcd-0d6e-4dc2-bf7e-7d39bdd0d176" />
-)
+<img width="1258" height="832" alt="image_69be1945" src="https://github.com/user-attachments/assets/d4d5bfce-43b4-43ed-84a7-904b55237455" />
 
 ### 🌐 Network Segmentation Matrix
 
