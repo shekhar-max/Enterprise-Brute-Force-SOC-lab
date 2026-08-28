@@ -11,7 +11,8 @@ This project demonstrates the end-to-end design, deployment, and configuration o
 The infrastructure is orchestrated using a virtualized firewall router segmenting four distinct, isolated internal virtual networks (using host-only internal switches) to simulate a hardened corporate environment.
 
 *Insert your custom topology diagram image here:*
-![SOC Lab Topology](image_u_yHu0.png)
+![SOC Lab Topology](<img width="1258" height="832" alt="image_69be1945" src="https://github.com/user-attachments/assets/84407bcd-0d6e-4dc2-bf7e-7d39bdd0d176" />
+)
 
 ### 🌐 Network Segmentation Matrix
 
